@@ -74,6 +74,24 @@ st.markdown("""
             margin: 8px 4px;
         }
 
+        /* Botón de login especial */
+        .login-button {
+            background-color: #4CAF50 !important;
+            color: white !important;
+            font-weight: bold;
+            font-size: 16px;
+            border-radius: 14px;
+            padding: 12px 0;
+            width: 100%;
+            margin-top: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .login-button:hover {
+            background-color: #45A049 !important;
+        }
+
         /* Mensajes */
         .stSuccess, .stError, .stWarning {
             font-size: 16px;
@@ -177,31 +195,118 @@ def mostrar():
     # Paso 2: Datos personales
     elif st.session_state.registro_paso == 2:
         st.subheader("Paso 2: Datos personales")
-        st.session_state.nombre_completo = st.text_input("Nombre completo")
-        st.session_state.presion = st.text_input("Presión")
-        st.session_state.tipo_sangre = st.selectbox("Tipo de sangre", ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"])
-        st.session_state.estatura = st.text_input("Estatura (cm)")
-        st.session_state.peso = st.text_input("Peso (kg)")
+        
+        # Información básica
+        st.markdown("**📋 Información básica**")
+        col1, col2 = st.columns(2)
+        with col1:
+            st.session_state.primer_nombre = st.text_input("Primer nombre", placeholder="Ej: Juan")
+            st.session_state.primer_apellido = st.text_input("Primer apellido", placeholder="Ej: Pérez")
+        with col2:
+            st.session_state.segundo_nombre = st.text_input("Segundo nombre (opcional)", placeholder="Ej: Carlos")
+            st.session_state.segundo_apellido = st.text_input("Segundo apellido (opcional)", placeholder="Ej: García")
+        
+        st.session_state.fecha_nacimiento = st.date_input("Fecha de nacimiento")
+        
+        st.session_state.correo = st.text_input("Correo electrónico", placeholder="ejemplo@correo.com")
+        
+        # Contacto y ubicación
+        st.markdown("**📞 Contacto y ubicación**")
+        col1, col2 = st.columns(2)
+        with col1:
+            st.session_state.celular = st.text_input("Número de celular", placeholder="Ej: +57 300 123 4567")
+        with col2:
+            st.session_state.ubicacion = st.text_input("Ciudad/Ubicación", placeholder="Ej: Medellín, Antioquia")
+        
+        st.session_state.direccion = st.text_area("Dirección completa", 
+                                                placeholder="Ej: Calle 50 # 25-30, Barrio Laureles", 
+                                                height=80)
+        
+        # Datos médicos
+        st.markdown("**🏥 Información médica**")
+        col1, col2 = st.columns(2)
+        with col1:
+            st.session_state.tipo_sangre = st.selectbox("Tipo de sangre", 
+                                                      ["Seleccionar...", "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"],
+                                                      index=0)
+        with col2:
+            st.session_state.presion = st.text_input("Presión arterial", placeholder="Ej: 120/80")
+        
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            st.session_state.estatura = st.number_input("Estatura (cm)", 
+                                                      min_value=100, 
+                                                      max_value=250, 
+                                                      value=170, 
+                                                      step=1)
+        with col2:
+            st.session_state.peso = st.number_input("Peso (kg)", 
+                                                  min_value=30.0, 
+                                                  max_value=300.0, 
+                                                  value=70.0, 
+                                                  step=0.5)
+        with col3:
+            st.session_state.temperatura = st.number_input("Temperatura corporal (°C)", 
+                                                         min_value=35.0, 
+                                                         max_value=42.0, 
+                                                         value=36.5, 
+                                                         step=0.1)
 
         col1, col2 = st.columns(2)
         if col1.button("Volver"):
             st.session_state.registro_paso = 1
         if col2.button("Siguiente"):
-            if all([st.session_state.nombre_completo, st.session_state.presion, st.session_state.tipo_sangre, st.session_state.estatura, st.session_state.peso]):
+            # Validar campos obligatorios
+            campos_requeridos = [
+                st.session_state.get('primer_nombre', ''),
+                st.session_state.get('primer_apellido', ''),
+                st.session_state.get('correo', ''),
+                st.session_state.get('celular', ''),
+                st.session_state.get('ubicacion', ''),
+                st.session_state.get('direccion', ''),
+                st.session_state.get('presion', '')
+            ]
+            
+            if (all(campos_requeridos) and 
+                st.session_state.get('tipo_sangre', '') != "Seleccionar..." and
+                st.session_state.get('fecha_nacimiento') is not None):
                 st.session_state.registro_paso = 3
             else:
-                st.warning("Completa todos los campos personales.")
+                st.warning("Por favor completa todos los campos obligatorios para continuar.")
 
     # Paso 3: Confirmación
     elif st.session_state.registro_paso == 3:
         st.subheader("Paso 3: Confirmación")
 
+        st.markdown("**👤 Datos de acceso**")
         st.write("**Usuario:**", st.session_state.new_username)
-        st.write("**Nombre completo:**", st.session_state.nombre_completo)
-        st.write("**Presión:**", st.session_state.presion)
-        st.write("**Tipo de sangre:**", st.session_state.tipo_sangre)
-        st.write("**Estatura:**", st.session_state.estatura)
-        st.write("**Peso:**", st.session_state.peso)
+        
+        st.markdown("**📋 Información personal**")
+        
+        # Construir nombre completo para mostrar
+        primer_nombre = st.session_state.get('primer_nombre', '')
+        segundo_nombre = st.session_state.get('segundo_nombre', '')
+        primer_apellido = st.session_state.get('primer_apellido', '')
+        segundo_apellido = st.session_state.get('segundo_apellido', '')
+        
+        nombre_completo = f"{primer_nombre} {segundo_nombre} {primer_apellido} {segundo_apellido}".strip()
+        nombre_completo = ' '.join(nombre_completo.split())  # Eliminar espacios extra
+        
+        col1, col2 = st.columns(2)
+        with col1:
+            st.write("**Nombre completo:**", nombre_completo)
+            st.write("**Correo:**", st.session_state.get('correo', ''))
+            st.write("**Celular:**", st.session_state.get('celular', ''))
+            st.write("**Ubicación:**", st.session_state.get('ubicacion', ''))
+        with col2:
+            st.write("**Fecha de nacimiento:**", st.session_state.get('fecha_nacimiento', ''))
+            st.write("**Tipo de sangre:**", st.session_state.get('tipo_sangre', ''))
+            st.write("**Presión arterial:**", st.session_state.get('presion', ''))
+            st.write("**Temperatura:**", f"{st.session_state.get('temperatura', 0)}°C")
+        
+        st.write("**Dirección:**", st.session_state.get('direccion', ''))
+        st.write("**Estatura:**", f"{st.session_state.get('estatura', 0)} cm")
+        st.write("**Peso:**", f"{st.session_state.get('peso', 0)} kg")
 
         col1, col2 = st.columns(2)
         if col1.button("Volver"):
@@ -214,6 +319,27 @@ def mostrar():
     elif st.session_state.registro_paso == 4:
         st.subheader("Genial, ya estás registrado 🎉")
         st.success("Tu cuenta fue creada con éxito.")
+        
+        # Botón para ir al login
+        if st.button("Ir al Login", key="login_redirect"):
+            # Limpiar el estado del registro
+            st.session_state.registro_paso = 1
+            # Limpiar todos los campos del formulario
+            campos_a_limpiar = [
+                'new_username', 'new_password', 'confirm_password',
+                'primer_nombre', 'segundo_nombre', 'primer_apellido', 'segundo_apellido',
+                'fecha_nacimiento', 'correo', 'celular', 'ubicacion', 'direccion', 
+                'presion', 'tipo_sangre', 'estatura', 'peso', 'temperatura'
+            ]
+            
+            for campo in campos_a_limpiar:
+                if campo in st.session_state:
+                    del st.session_state[campo]
+            
+            # Mostrar mensaje y enlace manual
+            st.success("¡Registro completado! Ahora puedes iniciar sesión.")
+            st.markdown("**[Haz clic aquí para ir al Login](http://localhost:8501/2login)**")
+            st.info("O ejecuta: streamlit run C:/Users/juani/login_app/frontEnd/pages/2login.py")
 
     st.markdown('</div>', unsafe_allow_html=True)
 
