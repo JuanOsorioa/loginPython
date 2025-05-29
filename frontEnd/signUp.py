@@ -92,7 +92,7 @@ def mostrar():
         if col1.button("Volver"):
             st.session_state.registro_paso = 2
         if col2.button("Registrarse"):
-            # Aquí normalmente se conectaría a la base de datos
+            # Hacer conexión a la base de datos y registrar al usuario
             st.session_state.registro_paso = 4
 
     # Paso 4: Éxito y redirección
@@ -100,7 +100,7 @@ def mostrar():
         st.subheader("Genial, ya estás registrado 🎉")
         st.success("Tu cuenta fue creada con éxito.")
         if st.button("Ir al inicio de sesión"):
-            st.switch_page("pages/login.py")  # Asegúrate de tener el archivo login.py en la misma carpeta
+            st.switch_page("pages/login.py")  
 
 if __name__ == "__main__":
     mostrar()
