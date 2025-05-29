@@ -3,15 +3,15 @@ import streamlit as st
 # CSS
 st.markdown("""
     <style>
-        /* Quitar barra superior */
+        
         header, footer, .css-18e3th9 {visibility: hidden;}
 
-        /* Fondo azul claro */
+        
         .stApp {
             background-color: #b3e5fc;
         }
 
-        /* Texto en negro */
+        
         h1, p, label {
             color: black !important;
             font-weight: bold;
@@ -26,12 +26,12 @@ st.markdown("""
             color: black !important;
         }
 
-        /* Ícono del ojo negro */
+        
         .css-15zrgzn svg {
             filter: invert(100%);
         }
 
-        /* Botón personalizado */
+        
         .custom-button {
             background-color: #111;
             color: white;
@@ -57,6 +57,6 @@ st.markdown("<p style='text-align: center;'>Por favor inicia sesión.</p>", unsa
 usuario = st.text_input("Nombre de usuario", placeholder="Escribe tu usuario")
 clave = st.text_input("Contraseña", type="password", placeholder="Escribe tu contraseña")
 
-# Botón de ingreso aca la conexion con la base de datos
+# Botón de ingreso aca va la base de datos
 if st.markdown('<button class="custom-button" type="submit">Ingresar</button>', unsafe_allow_html=True):
-    st.info("bienvenido.")
+    st.info("ingresando.")
