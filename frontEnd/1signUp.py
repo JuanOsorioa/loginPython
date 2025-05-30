@@ -6,7 +6,7 @@ import datetime
 # Configuración de página
 st.set_page_config(page_title="Plataforma Área de la Salud - Registro", layout="centered")
 
-# CSS con letras más oscuras
+# CSS actualizado para un diseño más consistente
 st.markdown("""
     <style>
         /* Fondo de la app */
@@ -14,114 +14,130 @@ st.markdown("""
             background-color: #e0f7fa;
         }
 
-        /* Contenedor principal del signup */
+        /* Contenedor principal */
         .main-container {
             background: white;
-            padding: 40px;
-            border-radius: 16px;
-            box-shadow: 0 10px 35px rgba(0, 60, 80, 0.2);
-            max-width: 480px;
-            margin: 2rem auto 2rem auto;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 2rem auto;
         }
 
         /* Títulos */
         h1, h2, h3, h4, h5, h6, .stTitle {
-            color: #111111;
+            color: #333333;
             font-weight: 700;
             text-align: center;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
         }
 
         /* Subtítulos */
         .stSubheader {
-            color: #222222;
+            color: #555555;
             font-weight: 600;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
             text-align: center;
         }
 
-        /* Labels y texto de inputs */
-        label, .css-16idsys, .css-qrbaxs, .css-1cpxqw2, .css-1v0mbdj, .st-bw {
-            color: #111111 !important;
-            font-weight: 600 !important;
-        }
-
-        input, .stTextInput input {
-            color: #111111 !important;
-            background-color: #E1F5FE !important;
+        /* Inputs */
+        input, .stTextInput input, .stNumberInput input, .stTextArea textarea {
+            color: #333333 !important;
+            background-color: #ffffff !important;
+            border: 1px solid #cccccc !important;
             border-radius: 8px !important;
-            padding: 8px !important;
+            padding: 10px !important;
         }
 
         /* Botones */
         button[kind="primary"] {
-            background-color: #0288D1 !important;
+            background-color: #007BFF !important;
             color: white !important;
             font-weight: bold;
             font-size: 16px;
-            border-radius: 14px;
-            padding: 12px 0;
+            border-radius: 8px;
+            padding: 10px 0;
             width: 100%;
-            margin-top: 18px;
+            margin-top: 20px;
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
 
         button[kind="primary"]:hover {
-            background-color: #0277BD !important;
+            background-color: #0056b3 !important;
         }
 
-        /* Botones en columnas */
+        /* Botones secundarios */
         .stButton button {
-            min-width: 120px;
-            margin: 8px 4px;
-        }
-
-        /* Botón de login especial */
-        .login-button {
-            background-color: #4CAF50 !important;
+            background-color: #6c757d !important;
             color: white !important;
             font-weight: bold;
-            font-size: 16px;
-            border-radius: 14px;
-            padding: 12px 0;
-            width: 100%;
-            margin-top: 18px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .login-button:hover {
-            background-color: #45A049 !important;
+            border-radius: 8px;
+            padding: 8px 16px;
+            margin: 10px 5px;
         }
 
         /* Mensajes */
         .stSuccess, .stError, .stWarning {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 600;
-            border-radius: 14px;
-            padding: 14px 22px;
+            border-radius: 8px;
+            padding: 12px 20px;
             margin-top: 1rem;
         }
 
-        /* Stepper: personalización */
-        div[style*="display:flex"] {
-            max-width: 480px;
-            margin: 0 auto 2rem auto;
+        /* Barra de pasos */
+        .stepper-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
         }
-        div[style*="border-radius:50%"] {
-            box-shadow: 0 0 8px rgba(0,0,0,0.15);
-            transition: background-color 0.3s ease;
+
+        .step {
+            text-align: center;
         }
-        div[style*="text-align:center"] > div:nth-child(2) {
+
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #cccccc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            color: white;
+            margin: 0 auto;
+        }
+
+        .step-circle.active {
+            background-color: #007BFF;
+        }
+
+        .step-circle.completed {
+            background-color: #28a745;
+        }
+
+        .step-label {
             margin-top: 8px;
-            font-weight: 600;
-            color: #222222;
             font-size: 14px;
+            color: #555555;
         }
-        div[style*="flex-grow:1"] {
-            background-color: #B0BEC5 !important;
-            margin: 0 8px;
+
+        .step-line {
+            flex-grow: 1;
+            height: 2px;
+            background-color: #cccccc;
+            margin: 0 10px;
+        }
+
+        .step-line.active {
+            background-color: #007BFF;
+        }
+
+        .step-line.completed {
+            background-color: #28a745;
         }
     </style>
 """, unsafe_allow_html=True)
@@ -151,17 +167,17 @@ class StepperBar:
             raise ValueError("Orientation must be either 'horizontal' or 'vertical'")
 
     def _display_horizontal(self):
-        stepper_html = "<div style='display:flex; justify-content:space-between; align-items:center;'>"
+        stepper_html = "<div class='stepper-container'>"
         for i, step in enumerate(self.steps):
-            color = self.completed_color if i < self.current_step else self.inactive_color
-            current_color = self.active_color if i == self.current_step else color
+            step_class = "completed" if i < self.current_step else "active" if i == self.current_step else ""
             stepper_html += f"""
-            <div style='text-align:center;'>
-                <div style='width:30px; height:30px; border-radius:50%; background-color:{current_color}; display:inline-block;'></div>
-                <div style='margin-top:5px; color:#222222;'>{step}</div>
+            <div class='step'>
+                <div class='step-circle {step_class}'>{i + 1}</div>
+                <div class='step-label'>{step}</div>
             </div>"""
             if i < len(self.steps) - 1:
-                stepper_html += f"<div style='flex-grow:1; height:2px; background-color:{self.inactive_color};'></div>"
+                line_class = "completed" if i < self.current_step else "active" if i == self.current_step else ""
+                stepper_html += f"<div class='step-line {line_class}'></div>"
         stepper_html += "</div>"
         return stepper_html
 

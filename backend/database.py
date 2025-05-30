@@ -36,5 +36,10 @@ class Database:
         if self.connection_pool:
             self.connection_pool.closeall()
 
+    def fetch_as_dict(self, cursor, query, params=None):
+        cursor.execute(query, params or ())
+        columns = [desc[0] for desc in cursor.description]
+        return [dict(zip(columns, row)) for row in cursor.fetchall()]
+
 
 db = Database()
