@@ -1,4 +1,6 @@
 import streamlit as st
+from backend.auth import Auth
+# Importar la clase Auth del backend
 
 # Configuración inicial de la página
 st.set_page_config(page_title="Sistema de Salud - Inicio de Sesión", layout="centered")
@@ -88,6 +90,9 @@ usuario = st.text_input("Nombre de usuario", placeholder="Escribe tu usuario")
 clave = st.text_input("Contraseña", type="password", placeholder="Escribe tu contraseña")
 
 if st.button("Ingresar"):
-    st.info("Validando credenciales... (pendiente conexión con base de datos)")
+    user = Auth.login_user(usuario, clave)
+    if user:
+        st.session_state.user = user
+        st.experimental_rerun()
 
 st.markdown('</div>', unsafe_allow_html=True)

@@ -1,5 +1,6 @@
 import streamlit as st
-
+from backend.auth import Auth
+# Importar la clase Auth del backend
 # Configuración de página
 st.set_page_config(page_title="Plataforma Área de la Salud - Registro", layout="centered")
 
@@ -309,11 +310,11 @@ def mostrar():
         st.write("**Peso:**", f"{st.session_state.get('peso', 0)} kg")
 
         col1, col2 = st.columns(2)
-        if col1.button("Volver"):
-            st.session_state.registro_paso = 2
-        if col2.button("Registrarse"):
-            # Aquí guardarías los datos en la base de datos si fuera necesario
-            st.session_state.registro_paso = 4
+        try:
+            if Auth.register_user(st.session_state):
+                st.session_state.registro_paso = 4
+        except Exception as e:
+            st.error(f"Error al registrar: {e}")
 
     # Paso 4: Éxito
     elif st.session_state.registro_paso == 4:
