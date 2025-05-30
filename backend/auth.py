@@ -53,3 +53,19 @@ class Auth:
         finally:
             cursor.close()
             db.return_connection(conn)
+                        # ...existing code...
+            
+    @staticmethod
+    def login_user(username, password):
+        """Valida usuario y contraseña"""
+        conn = db.get_connection()
+        cursor = conn.cursor()
+        try:
+            cursor.execute("SELECT id, contrasena FROM usuarios WHERE nombre_usuario = %s", (username,))
+            row = cursor.fetchone()
+            if row and bcrypt.checkpw(password.encode(), row[1].encode()):
+                return {"id": row[0], "nombre_usuario": username}
+            return None
+        finally:
+            cursor.close()
+            db.return_connection(conn)

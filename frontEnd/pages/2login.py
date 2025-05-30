@@ -93,6 +93,6 @@ if st.button("Ingresar"):
     user = Auth.login_user(usuario, clave)
     if user:
         st.session_state.user = user
-        st.experimental_rerun()
+        st.rerun()
 
 st.markdown('</div>', unsafe_allow_html=True)
