@@ -65,6 +65,8 @@ class Auth:
             if row and bcrypt.checkpw(password.encode(), row[1].encode()):
                 return {"id": row[0], "nombre_usuario": username}
             return None
+        except Exception as e:
+            raise e
         finally:
             cursor.close()
             db.return_connection(conn)

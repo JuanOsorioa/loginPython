@@ -1,4 +1,5 @@
 import streamlit as st
+from backend.auth import Auth
 
 # css
 st.markdown("""
@@ -12,7 +13,6 @@ st.markdown("""
             color: #004d40 !important;
         }
 
-        
         .stButton > button {
             background-color: #007acc;
             color: white !important;
@@ -45,32 +45,30 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-#  sesión 
-if 'autenticado' not in st.session_state:
-    st.session_state.autenticado = False
+# Sesión
+if 'user' not in st.session_state:
+    st.session_state.user = None
 
-if 'usuario_actual' not in st.session_state:
-    st.session_state.usuario_actual = ""
-
-#  Login
-if not st.session_state.autenticado:
+# Login
+if not st.session_state.user:
     st.markdown("<h1 style='text-align: center;'>🩺 Ingreso al Sistema</h1>", unsafe_allow_html=True)
-    st.markdown("Por favor, inicie sesion para acceder a sus datos.")
+    st.markdown("Por favor, inicie sesión para acceder a sus datos.")
 
     usuario = st.text_input("👤 Nombre de usuario")
     clave = st.text_input("🔐 Contraseña", type="password")
 
     if st.button("Ingresar"):
-        if usuario and clave:  # aqui va la base de datos
-            st.session_state.autenticado = True
-            st.session_state.usuario_actual = usuario
+        user = Auth.login_user(usuario, clave)
+        if user:
+            st.session_state.user = user
             st.success("Inicio de sesión exitoso.")
+            st.rerun()  # Cambiado de experimental_rerun a rerun
         else:
             st.error("Usuario o contraseña incorrectos.")
 
-#  Pagina principal
-if st.session_state.autenticado:
-    nombre = st.session_state.usuario_actual.capitalize()
+# Página principal
+if st.session_state.user:
+    nombre = st.session_state.user["nombre_usuario"].capitalize()
     
     st.markdown(f"""
         <div class="welcome-box">

@@ -1,5 +1,7 @@
 import streamlit as st
 from backend.auth import Auth
+import datetime
+
 # Importar la clase Auth del backend
 # Configuración de página
 st.set_page_config(page_title="Plataforma Área de la Salud - Registro", layout="centered")
@@ -9,7 +11,7 @@ st.markdown("""
     <style>
         /* Fondo de la app */
         .stApp {
-            background-color: #0277BD;
+            background-color: #e0f7fa;
         }
 
         /* Contenedor principal del signup */
@@ -207,7 +209,11 @@ def mostrar():
             st.session_state.segundo_nombre = st.text_input("Segundo nombre (opcional)", placeholder="Ej: Carlos")
             st.session_state.segundo_apellido = st.text_input("Segundo apellido (opcional)", placeholder="Ej: García")
         
-        st.session_state.fecha_nacimiento = st.date_input("Fecha de nacimiento")
+        st.session_state.fecha_nacimiento = st.date_input(
+            "Fecha de nacimiento", 
+            min_value=datetime.date(1900, 1, 1),  # Fecha mínima permitida
+            max_value=datetime.date.today()      # Fecha máxima permitida (hoy)
+)
         
         st.session_state.correo = st.text_input("Correo electrónico", placeholder="ejemplo@correo.com")
         
