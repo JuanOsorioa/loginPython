@@ -53,7 +53,6 @@ class Auth:
         finally:
             cursor.close()
             db.return_connection(conn)
-                        # ...existing code...
             
     @staticmethod
     def login_user(username, password):
