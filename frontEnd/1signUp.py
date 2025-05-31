@@ -2,11 +2,10 @@ import streamlit as st
 from backend.auth import Auth
 import datetime
 
-# Importar la clase Auth del backend
-# Configuración de página
+# Configuración de la página
 st.set_page_config(page_title="Plataforma Área de la Salud - Registro", layout="centered")
 
-# CSS actualizado para un diseño más consistente
+# CSS personalizado para el diseño
 st.markdown("""
     <style>
         /* Fondo de la app */
@@ -142,7 +141,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-
+# Clase para la barra de pasos
 class StepperBar:
     def __init__(self, steps, orientation='horizontal', active_color='#0288D1', completed_color='#4CAF50', inactive_color='#B0BEC5'):
         self.steps = steps
@@ -182,11 +181,14 @@ class StepperBar:
         return stepper_html
 
 
+# Función principal para mostrar la página de registro
 def mostrar():
     st.markdown('<div class="main-container">', unsafe_allow_html=True)
 
+    # Título de la página
     st.title("Crear cuenta nueva")
 
+    # Definición de los pasos del registro
     steps = ["Acceso", "Datos personales", "Confirmación", "Final"]
     if "registro_paso" not in st.session_state:
         st.session_state.registro_paso = 1
@@ -196,8 +198,9 @@ def mostrar():
     stepper.set_current_step(st.session_state.registro_paso - 1)
     st.markdown(stepper.display(), unsafe_allow_html=True)
 
-    # Paso 1: Datos de acceso
+    # Lógica para cada paso del registro
     if st.session_state.registro_paso == 1:
+        # Paso 1: Datos de acceso
         st.subheader("Paso 1: Ingresa tu nombre de usuario y contraseña")
         st.session_state.new_username = st.text_input("Nombre de usuario")
         st.session_state.new_password = st.text_input("Contraseña", type="password")
@@ -367,5 +370,6 @@ def mostrar():
     st.markdown('</div>', unsafe_allow_html=True)
 
 
+# Punto de entrada principal
 if __name__ == "__main__":
     mostrar()

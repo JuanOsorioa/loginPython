@@ -3,7 +3,7 @@ from backend.auth import Auth
 from backend.database import db
 from fpdf import FPDF
 
-# css
+# CSS personalizado para la interfaz de usuario
 st.markdown("""
     <style>
         .stApp {
@@ -47,11 +47,11 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Sesión
+# Inicialización de la sesión
 if 'user' not in st.session_state:
     st.session_state.user = None
 
-# Login
+# Lógica de inicio de sesión
 if not st.session_state.user:
     st.markdown("<h1 style='text-align: center;'>🩺 Ingreso al Sistema</h1>", unsafe_allow_html=True)
     st.markdown("Por favor, inicie sesión para acceder a sus datos.")
@@ -68,28 +68,52 @@ if not st.session_state.user:
         else:
             st.error("Usuario o contraseña incorrectos.")
 
+# Función para calcular el IMC
 def calcular_imc(peso, estatura):
     return peso / (estatura / 100) ** 2
 
+# Función para generar un informe médico en PDF
 def generar_informe_pdf(datos_usuario, datos_medicos):
     pdf = FPDF()
     pdf.add_page()
-    pdf.set_font("Arial", size=12)
+
+    # Colores personalizados
+    color_primario = (0, 77, 64)  # Verde oscuro
+    color_secundario = (0, 122, 204)  # Azul
+    color_fondo = (224, 247, 250)  # Fondo claro
+
+    # Fondo de la página
+    pdf.set_fill_color(*color_fondo)
+    pdf.rect(0, 0, 210, 297, 'F')
 
     # Título
-    pdf.set_font("Arial", style="B", size=16)
-    pdf.cell(200, 10, txt="Informe Médico", ln=True, align="C")
+    pdf.set_font("Arial", style="B", size=20)
+    pdf.set_text_color(*color_primario)
+    pdf.cell(200, 15, txt="Informe Médico", ln=True, align="C")
     pdf.ln(10)
 
-    # Datos personales
+    # Sección: Datos personales
+    pdf.set_font("Arial", style="B", size=14)
+    pdf.set_text_color(*color_secundario)
+    pdf.cell(200, 10, txt="Datos Personales", ln=True, align="L")
+    pdf.ln(5)
+
     pdf.set_font("Arial", size=12)
+    pdf.set_text_color(0, 0, 0)
     pdf.cell(200, 10, txt=f"Nombre: {datos_usuario['primer_nombre']} {datos_usuario['primer_apellido']}", ln=True)
     pdf.cell(200, 10, txt=f"Fecha de nacimiento: {datos_usuario['fecha_nacimiento']}", ln=True)
     pdf.cell(200, 10, txt=f"Correo: {datos_usuario['correo']}", ln=True)
     pdf.cell(200, 10, txt=f"Celular: {datos_usuario['celular']}", ln=True)
     pdf.ln(10)
 
-    # Datos médicos
+    # Sección: Datos médicos
+    pdf.set_font("Arial", style="B", size=14)
+    pdf.set_text_color(*color_secundario)
+    pdf.cell(200, 10, txt="Datos Médicos", ln=True, align="L")
+    pdf.ln(5)
+
+    pdf.set_font("Arial", size=12)
+    pdf.set_text_color(0, 0, 0)
     imc = calcular_imc(datos_medicos["peso"], datos_medicos["estatura"])
     pdf.cell(200, 10, txt=f"IMC: {imc:.2f}", ln=True)
     if imc < 18.5:
@@ -114,14 +138,22 @@ def generar_informe_pdf(datos_usuario, datos_medicos):
         pdf.cell(200, 10, txt="Estado: Temperatura anormal. Podría indicar fiebre o hipotermia.", ln=True)
 
     pdf.ln(10)
-    pdf.cell(200, 10, txt="Recomendaciones generales:", ln=True)
+
+    # Sección: Recomendaciones generales
+    pdf.set_font("Arial", style="B", size=14)
+    pdf.set_text_color(*color_secundario)
+    pdf.cell(200, 10, txt="Recomendaciones Generales", ln=True, align="L")
+    pdf.ln(5)
+
+    pdf.set_font("Arial", size=12)
+    pdf.set_text_color(0, 0, 0)
     pdf.cell(200, 10, txt="- Mantenga una dieta equilibrada.", ln=True)
     pdf.cell(200, 10, txt="- Realice actividad física regularmente.", ln=True)
     pdf.cell(200, 10, txt="- Consulte a un médico si presenta síntomas persistentes.", ln=True)
 
     return pdf
 
-# Página principal
+# Página principal para usuarios autenticados
 if st.session_state.user:
     nombre = st.session_state.user["nombre_usuario"].capitalize()
     

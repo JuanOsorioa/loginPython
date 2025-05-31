@@ -1,13 +1,13 @@
-# Python
+# Ignorar archivos compilados de Python
 __pycache__/
 *.py[cod]
 *.db
 *.sqlite3
 .env
 
-# Entorno virtual
+# Ignorar entorno virtual
 venv/
 
-# Archivos del sistema
+# Ignorar archivos del sistema
 .DS_Store
 Thumbs.db

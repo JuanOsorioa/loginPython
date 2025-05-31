@@ -1,14 +1,20 @@
 from backend.database import db
 import bcrypt
 
+# Clase para manejar la autenticación
 class Auth:
     @staticmethod
     def register_user(user_data):
-        """Registra usuario y datos médicos"""
+        """Registra usuario y datos médicos, validando duplicados."""
         conn = db.get_connection()
         cursor = conn.cursor()
         try:
-            # 1. Insertar usuario
+            # Validar si el nombre de usuario ya existe
+            cursor.execute("SELECT id FROM usuarios WHERE nombre_usuario = %s", (user_data["new_username"],))
+            if cursor.fetchone():
+                raise ValueError("El nombre de usuario ya está en uso. Por favor, elige otro.")
+
+            # Insertar datos del usuario
             cursor.execute("""
                 INSERT INTO usuarios 
                 (nombre_usuario, contrasena, primer_nombre, segundo_nombre, 
@@ -31,7 +37,7 @@ class Auth:
             ))
             user_id = cursor.fetchone()[0]
 
-            # 2. Insertar datos médicos
+            # Insertar datos médicos
             cursor.execute("""
                 INSERT INTO datos_medicos 
                 (usuario_id, tipo_sangre, presion, estatura, peso, temperatura)
@@ -47,19 +53,24 @@ class Auth:
 
             conn.commit()
             return True
+        except ValueError as ve:
+            print(f"❌ Error de validación: {ve}")
+            raise ve
         except Exception as e:
             conn.rollback()
+            print(f"❌ Error al registrar usuario: {e}")
             raise e
         finally:
             cursor.close()
             db.return_connection(conn)
-            
+
     @staticmethod
     def login_user(username, password):
         """Valida usuario y contraseña"""
         conn = db.get_connection()
         cursor = conn.cursor()
         try:
+            # Validar credenciales
             cursor.execute("SELECT id, contrasena FROM usuarios WHERE nombre_usuario = %s", (username,))
             row = cursor.fetchone()
             if row and bcrypt.checkpw(password.encode(), row[1].encode()):
